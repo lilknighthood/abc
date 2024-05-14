@@ -65,10 +65,10 @@ jobs:
           cp ./libbox.aar sing-box-android/app/libs/
           cd sing-box-android
           echo "" >> gradle.properties
-      - name: list apk output dir
+      - name: Find APK output directory
         run: |
           cd sing-box-android
-          ls app/build/outputs/my_apk_dir
+          find app/build/outputs -type d
       - name: sign app
         uses: PuerNya/sign-android-release@v2.0.4
         env:
@@ -85,5 +85,5 @@ jobs:
           version: ${{ env.VERSION }}
         with:
           name: sfa-${{ env.version }}-arm64-v8a
-          path: sing-box-android/app/build/outputs/apk/my_apk_dir/*-arm64-v8a-signed.apk
+          path: sing-box-android/app/build/outputs/correct_apk_dir/*-arm64-v8a-signed.apk
           retention-days: 1
