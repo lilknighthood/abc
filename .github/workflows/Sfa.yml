@@ -67,8 +67,8 @@ jobs:
           echo "" >> gradle.properties
       - name: list apk output dir
         run: |
-          cd sing-box-android/app/build/outputs/apk
-          ls
+          cd sing-box-android
+          ls app/build/outputs/my_apk_dir
       - name: sign app
         uses: PuerNya/sign-android-release@v2.0.4
         env:
