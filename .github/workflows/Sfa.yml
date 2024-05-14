@@ -57,7 +57,7 @@ jobs:
           git fetch sekai
           mkdir -p SFA/app/libs/
           make lib_install
-          version=Cà Lem Version
+          version=CaLem_1.0
           CC=${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android34-clang
           CGO_ENABLED=0 gomobile bind -v -a -trimpath -androidapi 21 -javapkg=io.nekohasekai -libname=box -tags ${TAGS} -ldflags "-X github.com/sagernet/sing-box/constant.Version=${version} -s -w -buildid=" ./experimental/libbox
           cp ./libbox.aar SFA/app/libs/
