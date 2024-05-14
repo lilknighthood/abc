@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@v4.1.1
         with:
           path: sfa
-          repository: lilknighthood/sing-box-for-android
+          repository: SagerNet/sing-box-for-android
           submodules: recursive
 
       - name: setup java
@@ -47,19 +47,19 @@ jobs:
       - name: get sing-box version
         id: sing-box
         run: |
-          git remote add sekai https://github.com/lilknighthood/1.8.5
-          git fetch --tags sekai
-          version=$(CGO_ENABLED=0 go run ./cmd/internal/read_tag)
+          git remote add sekai https://github.com/SagerNet/sing-box
+          git fetch --tags sekai v1.8.5
+          version=1.8.5
           echo version=$version >> $GITHUB_OUTPUT
       - name: build libbox
         env:
           CC: ${{steps.setup-ndk.outputs.ndk-path}}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android34-clang
-          TAGS: with_quic,with_dhcp,with_wireguard,with_ech,with_utls,with_clash_api,with_gvisor
-          VERSION: ${{steps.sing-box.outputs.version}}
+          TAGS: with_quic,with_utls
+          VERSION: 1.8.5
           CGO_ENABLED: '0'
         run: |
           make lib_install
-          gomobile bind -v -a -trimpath -androidapi 21 -javapkg=io.nekohasekai -libname=box -tags ${TAGS} -ldflags "-X github.com/lilknighthood/1.8.5/constant.Version=${VERSION} -s -w -buildid=" ./experimental/libbox
+          gomobile bind -v -a -trimpath -androidapi 21 -javapkg=io.nekohasekai -libname=box -tags ${TAGS} -ldflags "-X github.com/sagernet/sing-box/constant.Version=${VERSION} -s -w -buildid=" ./experimental/libbox
       - name: setup build env && build app
         env:
           VERSION: ${{steps.sing-box.outputs.version}}
