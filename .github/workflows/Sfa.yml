@@ -65,19 +65,16 @@ jobs:
           cp ./libbox.aar sing-box-android/app/libs/
           cd sing-box-android
           echo "" >> gradle.properties
-      - name: Find APK output directory
-        run: |
-          cd sing-box-android
-          find app/build/outputs -type d
-      - name: sign app
+
+      - name: Sign SFA
         uses: PuerNya/sign-android-release@v2.0.4
         env:
           BUILD_TOOLS_VERSION: ${{steps.sdk.outputs.version}}
         with:
-          alias: ${{secrets.ALIAS}}
-          releaseDirectory: sfa/app/build/outputs/apk/other/release
-          signingKeyBase64: ${{secrets.SIGNING_KEY}}
-          keyStorePassword: ${{secrets.KEY_STORE_PASSWORD}}
+          releaseDirectory: SFA/app/build/outputs/apk/other/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
 
       - name: upload arm64-v8a apk
         uses: actions/upload-artifact@v3
@@ -85,5 +82,5 @@ jobs:
           version: ${{ env.VERSION }}
         with:
           name: sfa-${{ env.version }}-arm64-v8a
-          path: sing-box-android/app/build/outputs/correct_apk_dir/*-arm64-v8a-signed.apk
-          retention-days: 1
+          path: SFA/app/build/outputs/apk/other/release/*-arm64-v8a-signed.apk
+          compression-level: 9
