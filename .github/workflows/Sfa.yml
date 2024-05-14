@@ -21,12 +21,11 @@ jobs:
         with:
           go-version: ${{steps.go.outputs.version}}
 
-      - name: checkout app repository
-        uses: actions/checkout@v4.1.1
+      - name: checkout sing-box
+        uses: actions/checkout@v3
         with:
-          path: sfa
-          repository: SagerNet/sing-box-for-android
-          submodules: recursive
+          repository: SagerNet/sing-box
+          ref: v1.8.5
 
       - name: setup java
         uses: actions/setup-java@v4.0.0
@@ -49,12 +48,12 @@ jobs:
         run: |
           git remote add sekai https://github.com/SagerNet/sing-box
           git fetch --tags sekai v1.8.5
-          version=1.8.5
+          version: 1.8.5
           echo version=$version >> $GITHUB_OUTPUT
-      - name: build libbox
+      - name: build libbox 
         env:
           CC: ${{steps.setup-ndk.outputs.ndk-path}}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android34-clang
-          TAGS: with_quic,with_utls
+          TAGS: with_quic,with_utls  
           VERSION: 1.8.5
           CGO_ENABLED: '0'
         run: |
