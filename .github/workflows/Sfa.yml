@@ -77,7 +77,7 @@ jobs:
           BUILD_TOOLS_VERSION: ${{steps.sdk.outputs.version}}
         with:
           releaseDirectory: SFA/app/build/outputs/apk/other/release
-          signingKeyBase64: ${{ secrets.SIGN_KEY }}
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
 
