@@ -75,7 +75,7 @@ jobs:
       - name: Sign SFA
         uses: PuerNya/sign-android-release@v2.0.4
         env:
-          BUILD_TOOLS_VERSION: 1.8.7
+          BUILD_TOOLS_VERSION: ${{steps.sdk.outputs.version}}
         with:
           releaseDirectory: SFA/app/build/outputs/apk/other/release
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
