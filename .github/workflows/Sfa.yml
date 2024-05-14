@@ -50,7 +50,7 @@ jobs:
           git remote add sekai https://github.com/SagerNet/sing-box
           git fetch --tags sekai
           version=$(CGO_ENABLED=0 go run ./cmd/internal/read_tag)
-          echo version=$version >> $GITHUB_OUTPUT
+          echo version=1.8.5 >> $GITHUB_OUTPUT
       - name: build libbox
         env:
           CC: ${{steps.setup-ndk.outputs.ndk-path}}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android34-clang
@@ -59,7 +59,7 @@ jobs:
           CGO_ENABLED: '0'
         run: |
           make lib_install
-          gomobile bind -v -a -trimpath -androidapi 21 -javapkg=io.nekohasekai.viefast -libname=box -tags ${TAGS} -ldflags "-X github.com/sagernet/sing-box/constant.Version=${VERSION} -s -w -buildid=" ./experimental/libbox
+          gomobile bind -v -a -trimpath -androidapi 21 -javapkg=io.nekohasekai -libname=box -tags ${TAGS} -ldflags "-X github.com/sagernet/sing-box/constant.Version=${VERSION} -s -w -buildid=" ./experimental/libbox
       - name: setup build env && build app
         env:
           VERSION: ${{steps.sing-box.outputs.version.viefast}}
