@@ -58,7 +58,7 @@ jobs:
           make lib_install
           version=1.8.5
           CC=${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android34-clang
-          CGO_ENABLED=0 gomobile bind -v -a -trimpath -androidapi 21 -javapkg=io.nekohasekai -libname=box -tags ${TAGS} -ldflags "-X github.com/sagernet/sing-box/constant.Version=${version} -s -w -buildid=" ./experimental/libbox
+          CGO_ENABLED=0 gomobile bind -v -a -trimpath -androidapi 21 -javapkg=io.nekohasekai -libname=box -tags ${TAGS} -ldflags "-X lilknighthood/1.8.5/constant.Version=${version} -s -w -buildid=" ./experimental/libbox
           cp ./libbox.aar SFA/app/libs/
           cd SFA
           echo "" >> gradle.properties
