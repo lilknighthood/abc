@@ -43,13 +43,6 @@ jobs:
         id: sdk
         run: echo version=$(ls $ANDROID_HOME/build-tools | tail -n 1) >> $GITHUB_OUTPUT
 
-      - name: get sing-box version
-        id: sing-box
-        run: |
-          git remote add sekai https://github.com/SagerNet/sing-box
-          git fetch --tags sekai v1.8.7
-          version: 1.8.7
-          echo version=$version >> $GITHUB_OUTPUT
       - name: build libbox 
         env:
           CC: ${{steps.setup-ndk.outputs.ndk-path}}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android34-clang
