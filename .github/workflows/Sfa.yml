@@ -25,7 +25,7 @@ jobs:
         with:
           path: sfb
           repository: SagerNet/sing-box-for-android
-          ref: 'oldstable'
+          ref: oldstable
           submodules: recursive
 
       - name: setup java
