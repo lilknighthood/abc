@@ -53,7 +53,7 @@ jobs:
       - name: build libbox
         env:
           CC: ${{steps.setup-ndk.outputs.ndk-path}}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android34-clang
-          TAGS: with_quic,with_dhcp,with_wireguard,with_shadowsocksr,with_ech,with_utls,with_clash_api,with_gvisor
+          TAGS: with_quic,with_dhcp,with_wireguard,with_ech,with_utls,with_clash_api,with_gvisor,with_proxy_provider
           VERSION: ${{steps.sing-box.outputs.version}}
           CGO_ENABLED: '0'
         run: |
