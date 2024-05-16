@@ -1,4 +1,4 @@
-name: Build SFA
+name: Build sfb
 
 on:
   push:
@@ -23,8 +23,9 @@ jobs:
       - name: checkout app repository
         uses: actions/checkout@v4.1.1
         with:
-          path: sfa
+          path: sfb
           repository: SagerNet/sing-box-for-android
+          ref: 'oldstable'
           submodules: recursive
 
       - name: setup java
@@ -46,29 +47,29 @@ jobs:
       - name: get sing-box version
         id: sing-box
         run: |
-          git remote add sekai https://github.com/SagerNet/sing-box
-          git fetch --tags sekai
+          git remote add calem https://github.com/SagerNet/sing-box
+          git fetch --tags calem
           version=$(CGO_ENABLED=0 go run ./cmd/internal/read_tag)
           echo version=$version >> $GITHUB_OUTPUT
       - name: build libbox
         env:
           CC: ${{steps.setup-ndk.outputs.ndk-path}}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android34-clang
-          TAGS: with_quic,with_dhcp,with_wireguard,with_ech,with_utls,with_clash_api,with_gvisor,with_proxy_provider
+          TAGS: with_quic,with_dhcp,with_wireguard,with_ech,with_utls,with_clash_api,with_gvisor
           VERSION: ${{steps.sing-box.outputs.version}}
           CGO_ENABLED: '0'
         run: |
           make lib_install
-          gomobile bind -v -a -trimpath -androidapi 21 -javapkg=io.nekohasekai -libname=box -tags ${TAGS} -ldflags "-X github.com/sagernet/sing-box/constant.Version=${VERSION} -s -w -buildid=" ./experimental/libbox
+          gomobile bind -v -a -trimpath -androidapi 21 -javapkg=io.nekohacalem -libname=box -tags ${TAGS} -ldflags "-X github.com/sagernet/sing-box/constant.Version=${VERSION} -s -w -buildid=" ./experimental/libbox
       - name: setup build env && build app
         env:
           VERSION: ${{steps.sing-box.outputs.version}}
-          KEYSTORE: ${{secrets.SIGN_KEY}}
+          KEYSTORE: ${{secrets.SIGNING_KEY}}
           ALIAS_NAME: ${{secrets.ALIAS}}
           KEYSTORE_PASS: ${{secrets.SIGN_KEY}}
         run: |
-          mkdir -p sfa/app/libs/
-          cp ./libbox.aar sfa/app/libs/
-          cd sfa
+          mkdir -p sfb/app/libs/
+          cp ./libbox.aar sfb/app/libs/
+          cd sfb
           echo "" >> gradle.properties
           echo "org.gradle.jvmargs=-Xmx4096m -Dfile.encoding=UTF-8 -XX:+UseParallelGC" >> gradle.properties
           echo "org.gradle.caching=true" >> gradle.properties
@@ -84,7 +85,7 @@ jobs:
           BUILD_TOOLS_VERSION: ${{steps.sdk.outputs.version}}
         with:
           alias: ${{secrets.ALIAS}}
-          releaseDirectory: sfa/app/build/outputs/apk/other/release
+          releaseDirectory: sfb/app/build/outputs/apk/other/release
           signingKeyBase64: ${{secrets.SIGNING_KEY}}
           keyStorePassword: ${{secrets.KEY_STORE_PASSWORD}}
 
@@ -93,8 +94,8 @@ jobs:
         env:
           version: ${{steps.sing-box.outputs.version}}
         with:
-          name: sfa-${{env.version}}-arm64-v8a
-          path: sfa/app/build/outputs/apk/other/release/*-arm64-v8a-signed.apk
+          name: sfb-${{env.version}}-arm64-v8a
+          path: sfb/app/build/outputs/apk/other/release/*-arm64-v8a-signed.apk
           compression-level: 9
 
       - name: upload armeabi-v7a apk
@@ -102,8 +103,8 @@ jobs:
         env:
           version: ${{steps.sing-box.outputs.version}}
         with:
-          name: sfa-${{env.version}}-armeabi-v7a
-          path: sfa/app/build/outputs/apk/other/release/*-armeabi-v7a-signed.apk
+          name: sfb-${{env.version}}-armeabi-v7a
+          path: sfb/app/build/outputs/apk/other/release/*-armeabi-v7a-signed.apk
           compression-level: 9
 
       - name: upload x86_64 apk
@@ -111,8 +112,8 @@ jobs:
         env:
           version: ${{steps.sing-box.outputs.version}}
         with:
-          name: sfa-${{env.version}}-x86_64
-          path: sfa/app/build/outputs/apk/other/release/*-x86_64-signed.apk
+          name: sfb-${{env.version}}-x86_64
+          path: sfb/app/build/outputs/apk/other/release/*-x86_64-signed.apk
           compression-level: 9
 
       - name: upload x86 apk
@@ -120,8 +121,8 @@ jobs:
         env:
           version: ${{steps.sing-box.outputs.version}}
         with:
-          name: sfa-${{env.version}}-x86
-          path: sfa/app/build/outputs/apk/other/release/*-x86-signed.apk
+          name: sfb-${{env.version}}-x86
+          path: sfb/app/build/outputs/apk/other/release/*-x86-signed.apk
           compression-level: 9
 
       - name: upload universal apk
@@ -129,6 +130,6 @@ jobs:
         env:
           version: ${{steps.sing-box.outputs.version}}
         with:
-          name: sfa-${{env.version}}-universal
-          path: sfa/app/build/outputs/apk/other/release/*-universal-signed.apk
+          name: sfb-${{env.version}}-universal
+          path: sfb/app/build/outputs/apk/other/release/*-universal-signed.apk
           compression-level: 9
