@@ -17,7 +17,7 @@ import (
 type Client struct {
 	Count    uint
 	Interval time.Duration
-	Outbound option.Outbound
+	Outbound *option.Outbound
 }
 
 // Ping pings the destination
@@ -72,12 +72,12 @@ L:
 	return getStatistics(startAt, round, rtts), nil
 }
 
-func newInstance(outbound option.Outbound) (*box.Box, adapter.Outbound, error) {
+func newInstance(outbound *option.Outbound) (*box.Box, adapter.Outbound, error) {
 	options := option.Options{
 		Log: &option.LogOptions{
 			Level: log.FormatLevel(log.LevelPanic),
 		},
-		Outbounds: []option.Outbound{outbound},
+		Outbounds: []option.Outbound{*outbound},
 	}
 	instance, err := box.New(box.Options{
 		Options: options,

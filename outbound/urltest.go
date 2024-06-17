@@ -4,7 +4,6 @@ import (
 	"context"
 	"net"
 	"sort"
-	"time"
 
 	"github.com/sagernet/sing-box/adapter"
 	"github.com/sagernet/sing-box/common/healthcheck"
@@ -147,7 +146,6 @@ func (s *URLTest) NewPacketConnection(ctx context.Context, conn N.PacketConn, me
 
 func (s *URLTest) Select(network string) (adapter.Outbound, error) {
 	var minDelay healthcheck.RTT
-	var minTime time.Time
 	var minOutbound adapter.Outbound
 	var firstOutbound adapter.Outbound
 	for _, provider := range s.providers {
@@ -162,9 +160,8 @@ func (s *URLTest) Select(network string) (adapter.Outbound, error) {
 			if history == nil || history.Delay == healthcheck.Failed {
 				continue
 			}
-			if minDelay == 0 || minDelay > history.Delay+s.tolerance || minDelay > history.Delay-s.tolerance && minTime.Before(history.Time) {
+			if minDelay == 0 || minDelay > history.Delay+s.tolerance {
 				minDelay = history.Delay
-				minTime = history.Time
 				minOutbound = detour
 			}
 		}

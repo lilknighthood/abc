@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/sagernet/sing-box/common/urltest"
+	dns "github.com/sagernet/sing-dns"
 	E "github.com/sagernet/sing/common/exceptions"
 	N "github.com/sagernet/sing/common/network"
 	"github.com/sagernet/sing/common/rw"
@@ -30,6 +31,9 @@ type CacheFile interface {
 
 	StoreFakeIP() bool
 	FakeIPStorage
+
+	StoreRDRC() bool
+	dns.RDRCStore
 
 	LoadMode() string
 	StoreMode(mode string) error

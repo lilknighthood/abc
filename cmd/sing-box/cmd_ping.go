@@ -58,7 +58,7 @@ func init() {
 }
 
 func runPing() (*ping.Statistics, error) {
-	var outbound option.Outbound
+	var outbound *option.Outbound
 	if commandPing.Flags().NArg() > 0 {
 		u, err := url.Parse(commandPing.Flags().Arg(0))
 		if err != nil {
@@ -72,9 +72,9 @@ func runPing() (*ping.Statistics, error) {
 		if err != nil {
 			return nil, err
 		}
-		outbound = *out
+		outbound = out
 	} else {
-		outbound = option.Outbound{
+		outbound = &option.Outbound{
 			Type: C.TypeDirect,
 		}
 	}

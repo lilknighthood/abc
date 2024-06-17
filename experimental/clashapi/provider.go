@@ -30,13 +30,18 @@ func proxyProviderRouter(server *Server) http.Handler {
 
 func getProviders(server *Server) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var providersMap badjson.JSONObject
+		var responseMap, providersMap badjson.JSONObject
 		for _, provider := range server.router.Providers() {
 			providersMap.Put(provider.Tag(), providerInfo(server, provider))
 		}
-		render.JSON(w, r, render.M{
-			"providers": providersMap,
-		})
+		responseMap.Put("providers", &providersMap)
+		response, err := responseMap.MarshalJSON()
+		if err != nil {
+			render.Status(r, http.StatusInternalServerError)
+			render.JSON(w, r, newError(err.Error()))
+			return
+		}
+		w.Write(response)
 	}
 }
 

@@ -2,6 +2,7 @@ package dialer
 
 import (
 	"context"
+	"fmt"
 	"net"
 
 	"github.com/sagernet/sing-box/adapter"
@@ -29,8 +30,10 @@ func WithChainRedirects(ctx context.Context, chain []adapter.Outbound) context.C
 type ChainRedirectDialer struct {
 	// tag is tag of the parent outbound of this dialer
 	tag string
-	// detourDialer is the dialer configured by DialerOptions.Detour,
-	// which is used when no redirect is needed
+	// detourable indicates whether this dialer is detourable
+	detourable bool
+	// detourDialer is the dialer configured by DialerOptions.Detour (including empty, which means default detour),
+	// it is used when no redirect is needed
 	detourDialer N.Dialer
 	// defaultDialer is used to override the detourDialer
 	// when this dialer is the last one of the chain
@@ -38,9 +41,10 @@ type ChainRedirectDialer struct {
 }
 
 // NewChainRedirectDialer returns a new ChainRedirectDialer.
-func NewChainRedirectDialer(tag string, detourDialer, defaultDialer N.Dialer) *ChainRedirectDialer {
+func NewChainRedirectDialer(tag string, detourable bool, detourDialer, defaultDialer N.Dialer) *ChainRedirectDialer {
 	return &ChainRedirectDialer{
 		tag:           tag,
+		detourable:    detourable,
 		detourDialer:  detourDialer,
 		defaultDialer: defaultDialer,
 	}
@@ -49,6 +53,9 @@ func NewChainRedirectDialer(tag string, detourDialer, defaultDialer N.Dialer) *C
 // DialContext implements N.Dialer.
 func (d *ChainRedirectDialer) DialContext(ctx context.Context, network string, destination M.Socksaddr) (net.Conn, error) {
 	if dialer := d.dialerFromContext(ctx); dialer != nil {
+		if !d.detourable {
+			return nil, fmt.Errorf("[%s] detour redirect is not supported", d.tag)
+		}
 		return dialer.DialContext(ctx, network, destination)
 	}
 	return d.detourDialer.DialContext(ctx, network, destination)
@@ -57,6 +64,9 @@ func (d *ChainRedirectDialer) DialContext(ctx context.Context, network string, d
 // ListenPacket implements N.Dialer.
 func (d *ChainRedirectDialer) ListenPacket(ctx context.Context, destination M.Socksaddr) (net.PacketConn, error) {
 	if dialer := d.dialerFromContext(ctx); dialer != nil {
+		if !d.detourable {
+			return nil, fmt.Errorf("[%s] detour redirect is not supported", d.tag)
+		}
 		return dialer.ListenPacket(ctx, destination)
 	}
 	return d.detourDialer.ListenPacket(ctx, destination)
